@@ -1,153 +1,76 @@
-import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-
-
-driver = webdriver.Chrome()
-
-
-
-driver.get("https://stellarburgers.nomoreparties.site")
-
-
-# Проверка успешной регистрации
+class Locators:
+    NAME_INPUT = (By.XPATH, "//input[@name='name']")
+    EMAIL_INPUT = (By.XPATH, "//input[@name='email']")
+    PASSWORD_INPUT = (By.XPATH, "//input[@name='password']")
+    SUBMIT_BUTTON = (By.XPATH, "//button[@type='submit']")
+    REGISTRATION_SUCCESS_MESSAGE = (By.XPATH, "//div[@class='success-message']")
+    LOGIN_SUCCESS_MESSAGE = (By.XPATH, "//div[@class='welcome-message']")
+    USER_PROFILE_LINK = (By.XPATH, "//a[contains(@href,'/profile')]")
+    FILLINGS_LINK = (By.XPATH, "//a[@href='/fillings']")
+    FILLINGS_PAGE_TITLE = (By.XPATH, "//h1[contains(text(), 'Начинки')]")
 
 def test_successful_registration():
-    name_input = driver.find_element(By.XPATH, '//input[@name="name"]')
+    driver = webdriver.Chrome()
+    driver.get("https://stellarburgers.nomoreparties.site/register")
 
-    name_input.send_keys("Андрей")
+    email_input = driver.find_element(*Locators.NAME_INPUT)
+    email_input.send_keys("andrew")
 
-    email_input = driver.find_element(By.XPATH, '//input[@name="email"]')
-
+    email_input = driver.find_element(*Locators.EMAIL_INPUT)
     email_input.send_keys("andreiprokurov7234@yandex.ru")
 
-    password_input = driver.find_element(By.XPATH, '//input[@name="password"]')
+    password_input = driver.find_element(*Locators.PASSWORD_INPUT)
+    password_input.send_keys("razrazycheba123")
 
-    password_input.send_keys("Razrazycheba123")
-
-    submit_button = driver.find_element(By.XPATH, '//button[@type="submit"]')
-
+    submit_button = driver.find_element(*Locators.SUBMIT_BUTTON)
     submit_button.click()
 
-    time.sleep(2)  # Пауза для проверки результата
+    wait = WebDriverWait(driver, 10)
+    success_message = wait.until(EC.url_contains("https://stellarburgers.nomoreparties.site/login"))
+    assert success_message
 
-
-
-# Тестирование функциональности "Вход"
+    driver.quit()
 
 def test_login():
-    # Вход по кнопке «Войти в аккаунт» на главной
+    driver = webdriver.Chrome()
+    driver.get("https://stellarburgers.nomoreparties.site/login")
 
-    login_button = driver.find_element(By.XPATH, '//button[contains(text(), "Войти в аккаунт")]')
+    email_input = driver.find_element(*Locators.EMAIL_INPUT)
+    email_input.send_keys("test@example.com")
 
-    login_button.click()
+    password_input = driver.find_element(*Locators.PASSWORD_INPUT)
+    password_input.send_keys("password123")
 
-    # Вход через кнопку «Личный кабинет»
-
-    login_button = driver.find_element(By.XPATH, '//button[contains(text(), "Личный кабинет")]')
-
-    login_button.click()
-
-    # Вход через кнопку в форме регистрации
-
-    register_button = driver.find_element(By.XPATH, '//button[contains(text(), "Личный Кабинет")]')
-
-    register_button.click()
-
-    register_press = driver.find_element(By.XPATH, '//button[contains(text(), "Зарегестрироваться")]')
-
-    register_press.click()
-
-    enterning_press = driver.find_element(By.XPATH, '//button[contains(text(), "Войти")]')
-
-    enterning_press.click()
-
-    email_input = driver.find_element(By.XPATH, '//input[@name="email"]')
-
-    email_input.send_keys("andreiprokurov7234@yandex.ru")
-
-    password_input = driver.find_element(By.XPATH, '//input[@name="password"]')
-
-    password_input.send_keys("Razrazycheba123")
-
-    submit_button = driver.find_element(By.XPATH, '//button[@type="submit"]')
-
+    submit_button = driver.find_element(*Locators.SUBMIT_BUTTON)
     submit_button.click()
 
-    # Вход через кнопку в форме восстановления пароля
+    wait = WebDriverWait(driver, 10)
+    success_message = wait.until(EC.visibility_of_element_located(Locators.LOGIN_SUCCESS_MESSAGE))
+    assert success_message.text == "Добро пожаловать, test@example.com!"
 
-    reset_password_button = driver.find_element(By.XPATH, '//button[contains(text(), "Восстановить пароль")]')
+    driver.implicitly_wait(2)
 
-    reset_password_button.click()
+    user_profile_link = driver.find_element(*Locators.USER_PROFILE_LINK)
+    assert user_profile_link.text == "Профиль пользователя"
 
-    email_input = driver.find_element(By.XPATH, '//input[@name="email"]')
-
-    email_input.send_keys("andreiprokurov7234@yandex.ru")
-
-    submit_button = driver.find_element(By.XPATH, '//button[@type="submit"]')
-
-    submit_button.click()
-
-    time.sleep(2)
-
-    # Проверка перехода в личный кабинет
-
-    personal_account_link = driver.find_element(By.XPATH, '//a[@href="/profile"]')
-
-    personal_account_link.click()
-
-    time.sleep(2)
-
-    # Проверка перехода из личного кабинета в конструктор
-
-    constructor_link = driver.find_element(By.XPATH, '//a[@href="/burger-constructor"]')
-
-    constructor_link.click()
-
-    time.sleep(2)
-
-    # Проверка выхода из аккаунта
-
-    logout_button = driver.find_element(By.XPATH, '//button[contains(text(), "Выйти")]')
-
-    logout_button.click()
-
-
-# Тестирование раздела "Конструктор"
+    driver.quit()
 
 def test_burger_constructor():
-    # Проверка перехода к разделу "Булки"
+    driver = webdriver.Chrome()
+    driver.get("https://stellarburgers.nomoreparties.site")
 
-    buns_link = driver.find_element(By.XPATH, '//a[@href="/burger-constructor/buns"]')
-
-    buns_link.click()
-
-    time.sleep(2)
-
-    # Проверка перехода к разделу "Соусы"
-
-    sauces_link = driver.find_element(By.XPATH, '//a[@href="/burger-constructor/sauces"]')
-
-    sauces_link.click()
-
-    time.sleep(2)
-
-    # Проверка перехода к разделу "Начинки"
-
-    fillings_link = driver.find_element(By.XPATH, '//a[@href="/burger-constructor/fillings"]')
-
+    fillings_link = driver.find_element(*Locators.FILLINGS_LINK)
     fillings_link.click()
 
-    time.sleep(2)
+    wait = WebDriverWait(driver, 10)
+    fillings_page_title = wait.until(EC.visibility_of_element_located(Locators.FILLINGS_PAGE_TITLE))
+    assert fillings_page_title.text == "Начинки для бургеров"
+
+    driver.quit()
 
 
-
-test_successful_registration()
-
-test_login()
-
-test_burger_constructor()
-
-driver.quit()
