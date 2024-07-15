@@ -4,7 +4,23 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from locators import Locators as loc
+from locators import Helpers as helpers
 
+class Checks:
+    def __init__(self, driver):
+        self.driver = driver
+    def main_is_visible(self):
+        menu_main_visible = EC.visibility_of_element_located(loc.menu_loc)
+        menu_main = WebDriverWait(self.driver, 10).until(menu_main_visible)
+
+        assert menu_main
+
+
+
+    def login_form_is_exsits(self):
+        login_form_locator = (By.XPATH, '//form[@class="Auth_form__3qKeq mb-20"]')
+        login_form = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(login_form_locator))
+        assert login_form
 
 class RegistrationPage:
     def __init__(self, driver):
@@ -12,45 +28,53 @@ class RegistrationPage:
     def registration(self):
         self.driver.get("https://stellarburgers.nomoreparties.site/register")
 
-        username_input = self.driver.find_element(By.XPATH, loc.name_input)
-        username_input.send_keys(loc.username)
+        email_input = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(loc.email_input))
+        email_input.send_keys(helpers.user_email)
 
-        email_input = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, loc.email_input)))
-        email_input.send_keys(loc.user_email)
+        username_input = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(loc.name_input))
+        username_input.send_keys(helpers.username)
 
-        pwd_input = self.driver.find_element(By.XPATH, loc.password_input)
-        pwd_input.send_keys(loc.user_password)
 
-        submit_btn = self.driver.find_element(By.CSS_SELECTOR, loc.reg_btn )
-        submit_btn.click()
+        pwd_input = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(loc.password_input))
+        pwd_input.send_keys(helpers.user_password)
 
-        assert "Вход"
+        reg_btn = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(loc.reg_btn))
+        reg_btn.click()
+
+        Checks.login_form_is_exsits(self)
+
 
 class LoginPage:
     def __init__(self, driver):
         self.driver = driver
 
     def login_account(self):
-        login_btn = self.driver.find_element(By.XPATH, loc.loginAcc_btn)
+        login_btn = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(loc.loginAcc_btn))
         login_btn.click()
-        assert "Вход"
+
+        Checks.login_form_is_exsits(self)
+
+
 
     def login_persnl_acc(self):
         login_btn = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, loc.loginPersAcc_btn))
-        )
+            EC.presence_of_element_located(loc.loginPersAcc_btn))
         login_btn.click()
-        assert "Вход"
+
+        Checks.login_form_is_exsits(self)
 
     def login_by_reg(self):
-        login_btn = self.driver.find_element(By.CSS_SELECTOR, loc.entering_press)
+        login_btn = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable(loc.entering_press))
         login_btn.click()
-        assert "Вход"
+
+        Checks.login_form_is_exsits(self)
 
     def login_by_res_pwd(self):
-        res_pwd = self.driver.find_element(By.XPATH, loc.reset_password_button)
+        res_pwd = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable(loc.reset_password_button))
         res_pwd.click()
-        assert "Вход"
+        Checks.login_form_is_exsits(self)
 
 class Authorization:
     def __init__(self, driver):
@@ -61,17 +85,15 @@ class Authorization:
         LoginPage.login_account(self)
 
         # Ввод email
-        email_input = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, '//input[@type="text"]'))
-        )
-        email_input.send_keys(loc.registered_email)
+        email_input = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(loc.auth_email_input))
+        email_input.send_keys(helpers.registered_email)
 
         # Ввод пароля
-        pwd_input = self.driver.find_element(By.XPATH, '//input[@type="password"]')
-        pwd_input.send_keys(loc.user_password)
+        pwd_input = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(loc.auth_pwd_input))
+        pwd_input.send_keys(helpers.user_password)
 
         # Нажатие на кнопку отправки формы
-        submit_btn = self.driver.find_element(By.XPATH, '//*[@id="root"]/div/main/div/form/button')
+        submit_btn = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(loc.auth_submit_btn))
         submit_btn.click()
 class SwitchPage:
     def __init__(self, driver):
@@ -82,32 +104,28 @@ class SwitchPage:
         login_page.login_account()
 
     def switch(self):
-        # from time import sleep
         # Нажатие на кнопку аккаунта
         acc_btn = WebDriverWait(self.driver, 20).until(
-            EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/header/nav/a'))
-        )
+            EC.element_to_be_clickable(loc.account_btn))
         acc_btn.click()
 
         # Нажатие на кнопку конструктора
-        kit_btn = WebDriverWait(self.driver, 20).until(
-            EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/header/nav/ul/li[1]/a')))
+        kit_btn = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable(loc.kit_loc))
         kit_btn.click()
-        # sleep(10)
+
 
         # Проверка
-        menu = self.driver.find_element(By.XPATH,
-            '//div[@class="BurgerIngredients_ingredients__menuContainer__Xu3Mo"]')
-        assert menu
+        Checks.main_is_visible(self)
 
         acc_btn.click()
 
         # Нажатие на кнопку бургеров
         burger_btn = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, '//div[@class="AppHeader_header__logo__2D0X2"]'))
-        )
+            EC.element_to_be_clickable(loc.burger_loc))
         burger_btn.click()
-        assert menu
+
+        Checks.main_is_visible(self)
 
 
 class LogoutPage:
@@ -122,44 +140,39 @@ class LogoutPage:
 
         # Нажатие на кнопку аккаунта
         acc_btn = WebDriverWait(self.driver, 20).until(
-            EC.element_to_be_clickable((By.XPATH, '//*[@id="root"]/div/header/nav/a'))
+            EC.element_to_be_clickable(loc.account_btn)
         )
         acc_btn.click()
 
         # Ожидание появления и нажатие кнопки выхода из аккаунта
         logout_btn = WebDriverWait(self.driver, 20).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, loc.logout_button))
-        )
+            EC.element_to_be_clickable(loc.logout_button))
+
         logout_btn.click()
 
         # Проверка наличия формы авторизации после выхода из аккаунта
-        assert "Вход"
+        Checks.login_form_is_exsits(self)
 class KitPage:
     def __init__(self, driver):
         self.driver = driver
 
     def switch_to_buns(self):
         buns_loc = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, loc.buns_loc))
-        )
+            EC.element_to_be_clickable(loc.buns_loc))
+
         self.driver.execute_script("arguments[0].click();", buns_loc)
         assert loc.buns
 
     def switch_to_sauces(self):
         sauces_loc = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, loc.sauces_loc))
-        )
+            EC.element_to_be_clickable(loc.sauces_loc))
+
         self.driver.execute_script("arguments[0].click();", sauces_loc)
         assert loc.sauces
 
     def switch_to_fillings(self):
         fillings_loc = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, loc.fillings_loc))
-        )
+            EC.element_to_be_clickable(loc.fillings_loc))
+
         self.driver.execute_script("arguments[0].click();", fillings_loc)
         assert loc.fillings
-
-
-
-
-
