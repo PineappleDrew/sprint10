@@ -1,56 +1,43 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from conftest import driver
-from faker import Faker
 
+# поле ввода имени
+name_input = (By.XPATH, '//input[@name="name"]')
 
-class Locators:
-    fake = Faker()
+# поле ввода почты при регистрации
+email_input = (By.XPATH, "//form[contains(@class, 'Auth_form__3qKeq')]//fieldset[contains(@class, 'Auth_fieldset__1QzWN')][2]" "//input[@type='text' and @name='name']")
 
-    name_input = '//input[@name="name"]'
-    username = "Андрей"
-    registered_email = "andreiprokurov7234@yandex.ru"
+# поле ввода регистрации
+reg_email_input = (By.XPATH, '(//input[contains(@name, "name")])[2]')
 
-    email_input = '//*[@id="root"]/div/main/div/form/fieldset[2]/div/div/input'
-    user_email = fake.email() #Генерация случайного email с помощью faker
+# поле ввода пароля
+auth_pwd_input = (By.XPATH, '//input[@name="Пароль"]')
 
-    password_input = '//*[@id="root"]/div/main/div/form/fieldset[3]/div/div/input'
-    user_password = "Razrazycheba123"
+# кнопка отправки формы
+auth_submit_btn = (By.XPATH, '//button[contains(@class, "button_button__33qZ0") and contains(@class, "button_button_type_primary__1O7Bx") and contains(@class, "button_button_size_medium__3zxIa")]')
 
-    submit_button = 'button'
-    reg_btn = '.button_button__33qZ0 '
+# кнопка входа на главной странице
+loginAcc_btn = (By.XPATH, '//button[contains(@class, "button_button__33qZ0") and contains(@class, "button_button_type_primary__1O7Bx") and contains(@class, "button_button_size_large__G21Vg")]')
 
-    loginAcc_btn = '//*/section[2]/div/button'
-    loginPersAcc_btn = '//a[@href="/account"]'
+# поле ввода почты при входе в аккаунт
+log_email_input = (By.XPATH, '//input[@name="name"]')
 
-     # Вход через кнопку в форме регистрации
-    register_press = '//button[contains(text(), "Зарегистрироваться")]'
+# кнопка входа в личный кабинет
+loginPersAcc_btn = (By.XPATH, '//a[@href="/account"]')
 
-    entering_press = '.button_button__33qZ0 '
+# кнопка входа на странице регистрации
+login_btn = (By.XPATH, '//a[@href="/login"]')
 
-    # Вход через кнопку в форме восстановления пароля
-    reset_password_button = '//a[@href="/forgot-password"]'
+# кнопка перехода в конструктор
+constructor_btn = (By.XPATH, '//a[@href="/"]')
 
-    # Проверка корректного перехода в личный кабинет
-    account_btn = '//[href="/account"]'
+# кнопка выхода из аккаунта
+logout_btn = (By.XPATH, '//button[contains(text(), "Выход")]')
 
+# кнопка 'Булки' в конструкторе
+buns_loc = (By.XPATH, '//span[text()="Булки"]')
 
-    # Проверка перехода из ЛК при нажатии на Конструктор
-    kit_loc = 'a.AppHeader_header__link__3D_hX'
+# кнопка 'Соусы' в конструкторе
+sauces_loc = (By.XPATH, '//span[text()="Соусы"]')
 
-
-    # Проверка перехода из ЛК при нажатии на Бургер
-    burger_loc = '//div[@class="AppHeader_header__logo__2D0X2"]'
-
-    # Проверка выхода из аккаунта
-    logout_button = '.Account_button__14Yp3'
-
-    #KIT locators
-    buns_loc = '//*[@class="BurgerIngredients_ingredients__1N8v2"]/div/div[1]'
-    buns = '//*[@class="BurgerIngredients_ingredients__menuContainer__Xu3Mo"]/h2[1]'
-
-    sauces_loc = '//*[@class="BurgerIngredients_ingredients__1N8v2"]/div/div[2]'
-    sauces = '//*[@class="BurgerIngredients_ingredients__menuContainer__Xu3Mo"]/h2[2]'
-
-    fillings_loc = '//*[@class="BurgerIngredients_ingredients__1N8v2"]/div/div[3]'
-    fillings = '//*[@class="BurgerIngredients_ingredients__menuContainer__Xu3Mo"]/h2[3]'
+# кнопка 'Начинка' в конструкторе
+fillings_loc = (By.XPATH, '//span[text()="Начинки"]')
